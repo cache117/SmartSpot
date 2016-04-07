@@ -25,7 +25,7 @@ coverage
 build/Release
 
 # Dependency directories
-node_modules
+node_modules/
 jspm_packages
 
 # Optional npm cache directory
@@ -35,3 +35,5 @@ jspm_packages
 .node_repl_history
 
 # Created by .ignore support plugin (hsz.mobi)
+
+.idea/
