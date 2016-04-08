@@ -8,18 +8,18 @@
 <html>
 <head>
     <title>SmartSpot</title>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!--[if lte IE 8]>
     <script src="assets/js/html5shiv.js"></script><![endif]-->
-    <link rel="stylesheet" href="assets/css/main.css"/>
+    <link rel="stylesheet" href="assets/css/main.css" />
     <!--[if lte IE 9]>
-    <link rel="stylesheet" href="assets/css/ie9.css"/><![endif]-->
+    <link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
     <!--[if lte IE 8]>
-    <link rel="stylesheet" href="assets/css/ie8.css"/><![endif]-->
+    <link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <noscript>
-        <link rel="stylesheet" href="assets/css/noscript.css"/>
+        <link rel="stylesheet" href="assets/css/noscript.css" />
     </noscript>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
@@ -33,32 +33,32 @@
     <!-- Main -->
     <section id="main">
         <header>
-            <span class="avatar"><img src="images/avatar.jpg" alt=""/></span>
+            <span class="avatar"><img src="images/avatar.jpg" alt="" /></span>
             <h1>SmartSPOT</h1>
             <p>A Spotify Smart Playlist Creator</p>
         </header>
 
-        <hr/>
+        <hr />
         <form ng-submit="createPlaylist()">
             <div class="field">
-                <input type="text" ng-model="formContent" name="name" id="artist" placeholder="Artist"/>
+                <input type="text" ng-model="formContent" name="name" id="artist" placeholder="Artist" />
             </div>
             <div class="field">
                 <label>Size of Playlist?</label>
-                <input ng-model="formContent" type="radio" id="size-50" name="size-50"/>
+                <input ng-model="formContent" type="radio" id="size-50" name="size-50" />
                 <label for="size-50">50 Songs</label>
-                <input ng-model="formContent" type="radio" id="size-100" name="size-100"/>
+                <input ng-model="formContent" type="radio" id="size-100" name="size-100" />
                 <label for="size-100">100 Songs</label>
             </div>
             <div class="field">
-                <input type="checkbox" id="top-tracks" name="top-tracks" ng-model="formContent"/>
+                <input type="checkbox" id="top-tracks" name="top-tracks" ng-model="formContent" />
                 <label for="top-tracks">Include Only Top Tracks?</label>
             </div>
             <ul class="actions">
                 <li><a type="submit" class="button" id="start">Create</a></li>
             </ul>
         </form>
-        <hr/>
+        <hr />
 
         <footer>
         </footer>

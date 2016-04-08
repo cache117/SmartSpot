@@ -6,12 +6,12 @@ angular.module('smart-spot', [])
         {
             $scope.createPlaylist = function()
             {
-                console.log("working");
+                console.log("working"); //TODO not working properly.
             }
         }
     ]);
 
-var searchForArtist = function()
+var searchForArtist = function(artistName)
 {
 
-}
+};
