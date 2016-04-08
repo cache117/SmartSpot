@@ -8,9 +8,9 @@ var redirectUri = 'http://localhost:3001/callback';
 
 // credentials are optional
 var spotifyApi = new SpotifyWebApi({
-  clientId : clientId,
-  clientSecret : clientSecret,
-  redirectUri : redirectUri
+    clientId: clientId,
+    clientSecret: clientSecret,
+    redirectUri: redirectUri
 });
 
 /**
@@ -18,40 +18,31 @@ var spotifyApi = new SpotifyWebApi({
  * @param  {number} length The length of the string
  * @return {string} The generated string
  */
-var generateRandomString = function(length) {
-  var text = '';
-  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+var generateRandomString = function (length) {
+    var text = '';
+    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-  for (var i = 0; i < length; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
+    for (var i = 0; i < length; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
 };
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+router.get('/login', function (req, res, next) {
+    var state = generateRandomString(16);
+    var scopes = ['playlist-modify-private', 'playlist-modify-public', 'playlist-read-private'];
+    var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
+
+    console.log(authorizeURL);
+    res.redirect(authorizeURL);
 });
 
-router.get('/login', function(req, res, next) {
-	var state = generateRandomString(16);
-	  
-	var scopes = ['user-read-private', 'user-read-email'],
-		redirectUri = redirectUri,
-		clientId = clientId;
-		
-	var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
-
-	console.log(authorizeURL);
-	res.redirect(authorizeURL);
+router.get('/getArtist', function (req, res, next) {
+    res.render('index', {title: 'Express'});
 });
 
-router.get('/getArtist', function(req, res, next) {
-
-});
-
-router.get('/callback', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+router.get('/callback', function (req, res, next) {
+    res.render('index', {title: 'Express'});
 });
 
 module.exports = router;
