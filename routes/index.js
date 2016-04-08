@@ -2,9 +2,9 @@ var express = require('express');
 var router = express.Router();
 var SpotifyWebApi = require('spotify-web-api-node');
 
-var clientId = '4ac16aa3e074460eadc89752bdf4c6c6';
-var clientSecret = '65e0843ce1c6402095359b0e0ca5fa1f';
-var redirectUri = 'http://ec2-54-174-133-70.compute-1.amazonaws.com:3001/callback';
+var clientId = 'de9c4a4a601a43a093584aefeef9b845';
+var clientSecret = '3039cd179c4d4673b04aa3cfda9c9bf1';
+var redirectUri = 'http://localhost:3001/callback';
 
 // credentials are optional
 var spotifyApi = new SpotifyWebApi({
@@ -38,13 +38,16 @@ router.get('/login', function(req, res, next) {
 	  
 	var scopes = ['user-read-private', 'user-read-email'],
 		redirectUri = redirectUri,
-		clientId = clientId,
-		state = state;
+		clientId = clientId;
 		
 	var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
 
 	console.log(authorizeURL);
 	res.redirect(authorizeURL);
+});
+
+router.get('/getArtist', function(req, res, next) {
+
 });
 
 router.get('/callback', function(req, res, next) {

@@ -26,6 +26,7 @@ build/Release
 
 # Dependency directories
 node_modules/
+/SmartSpot.iml
 jspm_packages
 
 # Optional npm cache directory
