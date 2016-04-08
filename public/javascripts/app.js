@@ -1,3 +1,4 @@
+require('../../smartspot.js');
 angular.module('smart-spot', [])
     .controller('MainCtrl', [
         '$scope',
