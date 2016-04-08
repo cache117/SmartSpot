@@ -47,7 +47,6 @@
                 <label>Size of Playlist?</label>
                 <input ng-model="formContent" type="radio" id="size-50" name="size-50"/>
                 <label for="size-50">50 Songs</label>
-
                 <input ng-model="formContent" type="radio" id="size-100" name="size-100"/>
                 <label for="size-100">100 Songs</label>
             </div>
@@ -79,8 +78,10 @@
 <!--[if lte IE 8]>
 <script src="assets/js/respond.min.js"></script><![endif]-->
 <script>
-    if ('addEventListener' in window) {
-        window.addEventListener('load', function () {
+    if ('addEventListener' in window)
+    {
+        window.addEventListener('load', function()
+        {
             document.body.className = document.body.className.replace(/\bis-loading\b/, '');
         });
         document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
