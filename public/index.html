@@ -22,9 +22,10 @@
         <link rel="stylesheet" href="assets/css/noscript.css"/>
     </noscript>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
+    <script src="javascripts/app.js"></script>
 </head>
-<body class="is-loading">
-
+<body ng-app="smart-spot" ng-controller="MainCtrl" class="is-loading">
 
 <!-- Wrapper -->
 <div id="wrapper">
@@ -38,20 +39,20 @@
         </header>
 
         <hr/>
-        <form>
+        <form ng-submit="createPlaylist()">
             <div class="field">
                 <input type="text" ng-model="formContent" name="name" id="artist" placeholder="Artist"/>
             </div>
             <div class="field">
                 <label>Size of Playlist?</label>
-                <input ng-model="formContent" type="radio" id="size-50" name="robot"/>
+                <input ng-model="formContent" type="radio" id="size-50" name="size-50"/>
                 <label for="size-50">50 Songs</label>
 
-                <input ng-model="formContent" type="radio" id="size-100" name="robot"/>
+                <input ng-model="formContent" type="radio" id="size-100" name="size-100"/>
                 <label for="size-100">100 Songs</label>
             </div>
             <div class="field">
-                <input type="checkbox" id="top-tracks" name="top-tracks"/>
+                <input type="checkbox" id="top-tracks" name="top-tracks" ng-model="formContent"/>
                 <label for="top-tracks">Include Only Top Tracks?</label>
             </div>
             <ul class="actions">

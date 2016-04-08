@@ -37,7 +37,7 @@ router.get('/login', function (req, res, next) {
     res.redirect(authorizeURL);
 });
 
-router.get('/getArtist', function (req, res, next) {
+router.get('/search', function (req, res, next) {
     res.render('index', {title: 'Express'});
 });
 
