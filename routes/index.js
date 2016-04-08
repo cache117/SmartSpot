@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var SpotifyWebApi = require('spotify-web-api-node');
+require('../smartspot.js');
 
 var clientId = 'de9c4a4a601a43a093584aefeef9b845';
 var clientSecret = '3039cd179c4d4673b04aa3cfda9c9bf1';
