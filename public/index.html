@@ -53,9 +53,10 @@
             <div class="field">
                 <input type="checkbox" id="human" name="human" />
                 <label for="human">Include Only Top Tracks?</label>
+                {{test}}
             </div>
             <ul class="actions">
-                <li><a type="submit" class="button" id="start">Create</a></li>
+                <li><a type="submit" class="button" id="start" ng-click="createPlaylist()">Create</a></li>
             </ul>
         </form>
         <hr />

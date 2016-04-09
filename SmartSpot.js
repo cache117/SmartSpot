@@ -62,6 +62,7 @@ function SmartSpot(clientId, clientSecret, redirectUri)
     /**
      * Gets the artists related to the given artist.
      * @param {string} artistID the Spotify ID of the artist.
+     * @returns {Object} the most similar artist.
      */
     this.getRelatedArtists = function(artistID)
     {
@@ -76,6 +77,7 @@ function SmartSpot(clientId, clientSecret, redirectUri)
                     console.log('I got ' + data.body.artists.length + ' similar artists!');
 
                     console.log('The most similar one is ' + data.body.artists[0].name);
+                    return data.body.artists[0];
                 }
                 else
                 {
@@ -114,7 +116,7 @@ function SmartSpot(clientId, clientSecret, redirectUri)
     this.createPlaylist = function(user, playlistTitle, tracks)
     {
         // Create a private playlist
-        var userID = spotifyApi.spotifyApi.createPlaylist('thelinmichael', 'My Cool Playlist', { 'public':false })
+        spotifyApi.spotifyApi.createPlaylist('thelinmichael', 'My Cool Playlist', { 'public':false })
             .then(function(data)
             {
                 console.log('Created playlist!');

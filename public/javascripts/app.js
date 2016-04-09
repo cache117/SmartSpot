@@ -1,7 +1,7 @@
 angular.module('smart-spot', [])
     .controller('MainCtrl', [
-        '$scope',
-        function($scope)
+        '$scope', '$http',
+        function($scope, $http)
         {
             $scope.createPlaylist = function()
             {
