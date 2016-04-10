@@ -5,7 +5,14 @@ angular.module('smart-spot', [])
         {
             $scope.createPlaylist = function()
             {
-                console.log("In createPlaylist()"); //TODO not working properly.
+                window.open("/login", "Playlist Creation", 'WIDTH=400,HEIGHT=500');
+                //var artist = $scope.artist;
+                //console.log($scope.artist);
+                $http.post("/create", artist).success(function(data)
+                {
+                    console.log("Worked. " + data);
+                });
+
             }
         }
     ]);

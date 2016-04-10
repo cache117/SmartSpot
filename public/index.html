@@ -41,17 +41,17 @@
         <hr />
         <form ng-submit="createPlaylist()">
             <div class="field">
-                <input type="text" ng-model="formContent" name="name" id="artist" placeholder="Artist" />
+                <input type="text" ng-model="artist" name="name" id="artist" placeholder="Artist" />
             </div>
             <div class="field">
                 <label>Size of Playlist?</label>
-                <input ng-model="formContent" type="radio" id="robot_yes" name="robot" />
+                <input type="radio" ng-model="songs.fifty" id="robot_yes" name="robot" />
                 <label for="robot_yes">50 Songs</label>
-                <input ng-model="formContent" type="radio" id="robot_no" name="robot" />
+                <input type="radio" ng-model="songs.hundred" id="robot_no" name="robot" />
                 <label for="robot_no">100 Songs</label>
             </div>
             <div class="field">
-                <input type="checkbox" id="human" name="human" />
+                <input type="checkbox" ng-model="songs.top" id="human" name="human" />
                 <label for="human">Include Only Top Tracks?</label>
                 {{test}}
             </div>

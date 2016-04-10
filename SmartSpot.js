@@ -135,6 +135,11 @@ function SmartSpot(clientId, clientSecret, redirectUri)
                 console.log('Something went wrong!', err);
             });
     };
+
+    this.getUserName = function()
+    {
+
+    }
 }
 
 module.exports = SmartSpot;
