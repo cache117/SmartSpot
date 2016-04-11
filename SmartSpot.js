@@ -36,21 +36,25 @@ function SmartSpot(clientId, clientSecret, redirectUri)
     {
         // Get an artist's top tracks
         spotifyApi.getArtistTopTracks('0oSGxfWSnnOXhD2fKuz2Gy', 'GB')
-            .then(function(data) {
+            .then(function(data)
+            {
                 console.log(data.body);
-            }, function(err) {
+            }, function(err)
+            {
                 console.log('Something went wrong!', err);
             });
 
         spotifyApi.getArtistTopTracks('0oSGxfWSnnOXhD2fKuz2Gy', 'GB')
-            .then(function(data) {
+            .then(function(data)
+            {
                 console.log(data.body);
-            }, function(err) {
+            }, function(err)
+            {
                 console.log('Something went wrong!', err);
             });
     };
 
-    this.login = function(req, res, next)
+    this.login = function(req, res, callback)
     {
         var state = generateRandomString(16);
         var scopes = ['playlist-modify-private', 'playlist-modify-public', 'playlist-read-private'];
@@ -58,13 +62,12 @@ function SmartSpot(clientId, clientSecret, redirectUri)
 
         console.log(authorizeURL);
         res.redirect(authorizeURL);
-        return spotifyApi.getMe();
     };
 
     /**
      * Gets the artist ID that most closely matches the given artist name.
      * @param {string} name the name of the artist to search for.
-     * @param callback the callback URL for this request.
+     * @param {function} callback the callback to send the Json response to.
      */
     this.getArtistID = function(name, callback)
     {
@@ -72,7 +75,7 @@ function SmartSpot(clientId, clientSecret, redirectUri)
             .then(function(data)
             {
                 console.log('Search artists for ' + name, data.body);
-                var closestArtist =  data.body.artists.items[0];
+                var closestArtist = data.body.artists.items[0];
                 console.log(closestArtist);
                 console.log('Closest artist: ' + closestArtist.name + ' with ID: ' + closestArtist.id);
                 callback(closestArtist);
@@ -84,13 +87,12 @@ function SmartSpot(clientId, clientSecret, redirectUri)
 
     /**
      * Gets the artists related to the given artist.
-     * @param {string} artistID the Spotify ID of the artist.
+     * @param {string} artistId the Spotify ID of the artist.
+     * @param {function} callback the callback to send the Json response to.
      * @returns {Object} the most similar artist.
      */
-    this.getRelatedArtists = function(artistID)
+    this.getRelatedArtists = function(artistId, callback)
     {
-        artistId = '0qeei9KQnptjwb8MgkqEoy'; //TODO just for testing
-
         spotifyApi.getArtistRelatedArtists(artistId)
             .then(function(data)
             {
@@ -98,13 +100,11 @@ function SmartSpot(clientId, clientSecret, redirectUri)
                 {
                     // Print the number of similar artists
                     console.log('I got ' + data.body.artists.length + ' similar artists!');
-
-                    console.log('The most similar one is ' + data.body.artists[0].name);
-                    return data.body.artists[0];
+                    callback(data.body);
                 }
                 else
                 {
-                    console.log('I didn\'t find any similar artists.. Sorry.');
+                    console.log('No related artists found');
                 }
 
             }, function(err)
@@ -116,14 +116,15 @@ function SmartSpot(clientId, clientSecret, redirectUri)
     /**
      * Gets the top tracks from the given artist.
      * @param {string} artistId the id of the artist.
+     * @param {function} callback the callback to send the Json response to.
      */
-    this.getArtistTopTracks = function(artistId)
+    this.getArtistTopTracks = function(artistId, callback)
     {
-        artistId = '0oSGxfWSnnOXhD2fKuz2Gy';
         spotifyApi.getArtistTopTracks(artistId, 'US')
             .then(function(data)
             {
                 console.log(data.body);
+                callback(data.body);
             }, function(err)
             {
                 console.log('Something went wrong!', err);
@@ -136,36 +137,43 @@ function SmartSpot(clientId, clientSecret, redirectUri)
      * @param {string} playlistTitle the title of the playlist.
      * @param {Array.<string>} tracks the tracks in the playlist. This should be an array of the form <code>["spotify:track:id", "spotify:track:id", ...]</code>.
      */
-    this.createPlaylist = function(user, playlistTitle, tracks)
+    this.buildPlaylist = function(user, playlistTitle, tracks)
     {
         // Create a private playlist
-        spotifyApi.spotifyApi.createPlaylist(user, playlistTitle, { 'public':true })
+        spotifyApi.buildPlaylist(user, playlistTitle, { 'public':true })
             .then(function(data)
             {
                 console.log('Created playlist!', data);
-            }, function(err)
-            {
-                console.log('Something went wrong!', err);
-            });
-
-        // Add tracks to a playlist
-        spotifyApi.addTracksToPlaylist(user, '5ieJqeLJjjI8iJWaxeBLuK', ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M"])
-            .then(function(data)
-            {
-                console.log('Added tracks to playlist!');
+                var playlistId = data.id; //TODO probably wrong.
+                // Add tracks to a playlist
+                spotifyApi.addTracksToPlaylist(user, playlistId, tracks)
+                    .then(function(data)
+                    {
+                        console.log('Added tracks to playlist!');
+                    }, function(err)
+                    {
+                        console.log('Something went wrong!', err);
+                    });
             }, function(err)
             {
                 console.log('Something went wrong!', err);
             });
     };
 
-    this.getUserName = function()
+    this.getMe = function(authCode, callback)
     {
-        spotifyApi.getMe()
-            .then(function(data) {
-                console.log('Some information about the authenticated user', data.body);
-            }, function(err) {
-                console.log('Something went wrong!', err);
+        spotifyApi.authorizationCodeGrant(authCode)
+            .then(function(response)
+            {
+                var accessToken = response.body['access_token'];
+                console.log("Got Access Token: " + accessToken);
+                spotifyApi.setAccessToken(accessToken);
+                return spotifyApi.getMe();
+            })
+            .then(function(data)
+            {
+                console.log("Me: " + data);
+                callback(data.body);
             });
     }
 }

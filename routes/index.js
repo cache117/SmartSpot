@@ -8,63 +8,81 @@ var redirectUri = 'http://localhost:3001/callback';
 
 var smartSpot = new SmartSpot(clientId, clientSecret, redirectUri);
 
+var authCode;
+
 router.use(express.static(__dirname + '/public'));
 
 router.get('/login', function(req, res, next)
 {
-    smartSpot.login(req, res, next)
-        .then(function(data)
-        {
-            // "Retrieved data for Faruk Sahin"
-            console.log('Retrieved data for ' + data.body['display_name']);
-
-            // "Email is farukemresahin@gmail.com"
-            console.log('Email is ' + data.body.email);
-
-            // "Image URL is http://media.giphy.com/media/Aab07O5PYOmQ/giphy.gif"
-            console.log('Image URL is ' + data.body.images[0].url);
-
-            // "This user has a premium account"
-            console.log('This user has a ' + data.body.product + ' account');
-        });
+    smartSpot.login(req, res);
 });
 
-router.get('/create', function(req, res, next)
+router.post('/create', function(req, res, next)
 {
-    //does the actual playlist creation.
+    smartSpot.getMe(function(data)
+    {
+        var userName = data;
+    });
 });
 
 router.get('/search', function(req, res, next)
 {
-    var artist = req.param('artist');
+    var artist = req.param('artistName');
     console.log("Artist: " + artist);
     smartSpot.getArtistID(artist, function(data)
     {
         console.log("Data: " + data);
         res.json(data.id);
+    });
+});
+
+router.get('/related', function(req, res, next)
+{
+    var artistId = req.param('artistId');
+    console.log(artistId);
+    smartSpot.getRelatedArtists(artistId, function(data)
+    {
+        console.log("Related Artists data: " + data);
+        res.json(data);
+    });
+});
+
+router.get('/topTracks', function(req, res, next)
+{
+    var artistId = req.param('artistId');
+    console.log(artistId);
+    smartSpot.getArtistTopTracks(artistId, function(data)
+    {
+        console.log("Top tracks: " + data);
+        res.json(data);
     });
 });
 
 router.get('/callback', function(req, res, next)
 {
-    //redirect to search
-    var artist = req.param('artist');
-    console.log("Artist: " + artist);
-    smartSpot.getArtistID(artist, function(data)
+    authCode = req.param('code');
+    console.log("Authorization Code: " + authCode);
+    smartSpot.getMe(authCode, function(user)
     {
-        console.log("Data: " + data);
-        res.json(data.id);
+        console.log("UserName: " + user.id);
+        res.sendfile('public/playlistCreation.html');
     });
-    //use that id to find related artists
-    //get top tracks of those artist.
-    //save those artists
-    res.sendfile('public/playlistCreation.html');
 });
 
 router.get('/me', function(req, res, next)
 {
-    var userName = smartSpot.getUserName();
-    console.log(userName);
+    /*if (authCode !== null && authCode !== undefined)
+    {*/
+        smartSpot.getMe(authCode, function(user)
+        {
+            console.log("UserName: " + user.id);
+            res.json(user);
+        });
+    /*}
+    else
+    {
+        res.send("Must login first");
+    }*/
 });
 
 router.get('/demo', function(req, res, next)

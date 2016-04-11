@@ -35,9 +35,9 @@
                     });
                 }
 
-                function createPlaylist(username, name, callback)
+                function buildPlaylist(username, name, callback)
                 {
-                    console.log('createPlaylist', username, name);
+                    console.log('buildPlaylist', username, name);
                     var url = 'https://api.spotify.com/v1/users/' + username +
                             '/playlists';
                     $.ajax(url, {
@@ -119,14 +119,14 @@
                     getUsername(function(username)
                     {
                         console.log('got username', username);
-                        createPlaylist(username, g_name, function(playlist)
+                        buildPlaylist(username, g_name, function(playlist)
                         {
                             console.log('created playlist', playlist);
                             addTracksToPlaylist(username, playlist, g_tracks, function()
                             {
                                 console.log('tracks added.');
-                                username = '1240070437';
-                                playlist = '';
+                                username = 'cache117';
+                                playlist = '0SGVg26tbs6M2hSBc3ghIK';
                                 $('#playlistlink').attr('href', 'spotify:user:' + username + ':playlist:' + playlist);
                                 $('#creating').hide();
                                 $('#done').show();
