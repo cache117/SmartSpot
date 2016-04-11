@@ -33,17 +33,17 @@
     <!-- Main -->
     <section id="main">
         <header>
-            <span class="avatar"><img src="images/avatar.jpg" alt="" /></span>
+            <span class="avatar"><img src="images/SmartSpot-01.png" alt="" /></span>
             <h1>SmartSPOT</h1>
             <p>A Spotify Smart Playlist Creator</p>
         </header>
 
         <hr />
-        <form ng-submit="createPlaylist()">
+        <form name = "form1" ng-submit="createPlaylist()">
             <div class="field">
                 <input type="text" ng-model="artist" name="name" id="artist" placeholder="Artist" />
             </div>
-            <div class="field">
+            <!-- <div class="field">
                 <label>Size of Playlist?</label>
                 <input type="radio" ng-model="songs.fifty" id="robot_yes" name="robot" />
                 <label for="robot_yes">50 Songs</label>
@@ -54,7 +54,7 @@
                 <input type="checkbox" ng-model="songs.top" id="human" name="human" />
                 <label for="human">Include Only Top Tracks?</label>
                 {{test}}
-            </div>
+            </div> -->
             <ul class="actions">
                 <li><a type="submit" class="button" id="start" ng-click="createPlaylist()">Create</a></li>
             </ul>
