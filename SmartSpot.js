@@ -32,6 +32,24 @@ function SmartSpot(clientId, clientSecret, redirectUri)
         return text;
     };
 
+    this.demo = function(req, res, next)
+    {
+        // Get an artist's top tracks
+        spotifyApi.getArtistTopTracks('0oSGxfWSnnOXhD2fKuz2Gy', 'GB')
+            .then(function(data) {
+                console.log(data.body);
+            }, function(err) {
+                console.log('Something went wrong!', err);
+            });
+
+        spotifyApi.getArtistTopTracks('0oSGxfWSnnOXhD2fKuz2Gy', 'GB')
+            .then(function(data) {
+                console.log(data.body);
+            }, function(err) {
+                console.log('Something went wrong!', err);
+            });
+    };
+
     this.login = function(req, res, next)
     {
         var state = generateRandomString(16);
@@ -40,23 +58,28 @@ function SmartSpot(clientId, clientSecret, redirectUri)
 
         console.log(authorizeURL);
         res.redirect(authorizeURL);
+        return spotifyApi.getMe();
     };
 
     /**
      * Gets the artist ID that most closely matches the given artist name.
      * @param {string} name the name of the artist to search for.
+     * @param callback the callback URL for this request.
      */
-    this.getArtistID = function(name)
+    this.getArtistID = function(name, callback)
     {
         spotifyApi.searchArtists(name)
             .then(function(data)
             {
                 console.log('Search artists for ' + name, data.body);
+                var closestArtist =  data.body.artists.items[0];
+                console.log(closestArtist);
+                console.log('Closest artist: ' + closestArtist.name + ' with ID: ' + closestArtist.id);
+                callback(closestArtist);
             }, function(err)
             {
                 console.error(err);
             });
-
     };
 
     /**
@@ -116,17 +139,17 @@ function SmartSpot(clientId, clientSecret, redirectUri)
     this.createPlaylist = function(user, playlistTitle, tracks)
     {
         // Create a private playlist
-        spotifyApi.spotifyApi.createPlaylist('thelinmichael', 'My Cool Playlist', { 'public':false })
+        spotifyApi.spotifyApi.createPlaylist(user, playlistTitle, { 'public':true })
             .then(function(data)
             {
-                console.log('Created playlist!');
+                console.log('Created playlist!', data);
             }, function(err)
             {
                 console.log('Something went wrong!', err);
             });
 
         // Add tracks to a playlist
-        spotifyApi.addTracksToPlaylist('thelinmichael', '5ieJqeLJjjI8iJWaxeBLuK', ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M"])
+        spotifyApi.addTracksToPlaylist(user, '5ieJqeLJjjI8iJWaxeBLuK', ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M"])
             .then(function(data)
             {
                 console.log('Added tracks to playlist!');
@@ -138,7 +161,12 @@ function SmartSpot(clientId, clientSecret, redirectUri)
 
     this.getUserName = function()
     {
-
+        spotifyApi.getMe()
+            .then(function(data) {
+                console.log('Some information about the authenticated user', data.body);
+            }, function(err) {
+                console.log('Something went wrong!', err);
+            });
     }
 }
 

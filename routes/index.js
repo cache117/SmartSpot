@@ -8,9 +8,25 @@ var redirectUri = 'http://localhost:3001/callback';
 
 var smartSpot = new SmartSpot(clientId, clientSecret, redirectUri);
 
+router.use(express.static(__dirname + '/public'));
+
 router.get('/login', function(req, res, next)
 {
-    smartSpot.login(req, res, next);
+    smartSpot.login(req, res, next)
+        .then(function(data)
+        {
+            // "Retrieved data for Faruk Sahin"
+            console.log('Retrieved data for ' + data.body['display_name']);
+
+            // "Email is farukemresahin@gmail.com"
+            console.log('Email is ' + data.body.email);
+
+            // "Image URL is http://media.giphy.com/media/Aab07O5PYOmQ/giphy.gif"
+            console.log('Image URL is ' + data.body.images[0].url);
+
+            // "This user has a premium account"
+            console.log('This user has a ' + data.body.product + ' account');
+        });
 });
 
 router.get('/create', function(req, res, next)
@@ -20,13 +36,41 @@ router.get('/create', function(req, res, next)
 
 router.get('/search', function(req, res, next)
 {
-    //smartSpot.getArtistID(req.) // TODO get the artists name from the request.
-    res.render('index', { title:'Express' });
+    var artist = req.param('artist');
+    console.log("Artist: " + artist);
+    smartSpot.getArtistID(artist, function(data)
+    {
+        console.log("Data: " + data);
+        res.json(data.id);
+    });
 });
 
 router.get('/callback', function(req, res, next)
 {
-    res.render('index', { title:'Express' });
+    //redirect to search
+    var artist = req.param('artist');
+    console.log("Artist: " + artist);
+    smartSpot.getArtistID(artist, function(data)
+    {
+        console.log("Data: " + data);
+        res.json(data.id);
+    });
+    //use that id to find related artists
+    //get top tracks of those artist.
+    //save those artists
+    res.sendfile('public/playlistCreation.html');
+});
+
+router.get('/me', function(req, res, next)
+{
+    var userName = smartSpot.getUserName();
+    console.log(userName);
+});
+
+router.get('/demo', function(req, res, next)
+{
+    smartSpot.demo(req, res, next);
+    res.sendfile('public/playlistCreation.html');
 });
 
 module.exports = router;
