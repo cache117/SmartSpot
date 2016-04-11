@@ -7,7 +7,6 @@ app.controller('MainCtrl', [
         {
             var artistName = $scope.artist;
             console.log(artistName);
-            window.open("/login", "Playlist Creation", 'WIDTH=400, HEIGHT=500');
             getArtistId(artistName)
                 .then(function(response)
                 {
@@ -42,6 +41,7 @@ app.controller('MainCtrl', [
                                                 console.log("Tracks: " + tracks);
                                                 localStorage.setItem("SmartSpot-tracks", JSON.stringify(tracks));
                                                 localStorage.setItem("SmartSpot-name", artistName + " Mashup");
+                                                window.open("/login", "Playlist Creation", 'WIDTH=400, HEIGHT=500');
                                             }, function(error)
                                             {
                                                 return $q.reject(error);
