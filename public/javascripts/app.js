@@ -18,29 +18,39 @@ app.controller('MainCtrl', [
                         {
                             var relatedArtists = response.data.artists;
                             console.log(response);
-                            //TODO getTopTracks of current artist
                             var size = 19;
                             if (relatedArtists.length < size)
                                 size = relatedArtists.length;
                             var tracks = [];
-                            for (var i = 0; i < 2; i++) //TODO change 2 to size
-                            {
-                                getTopTracks(relatedArtists[i].id)
-                                    .then(function(response)
+                            getTopTracks(artistId)
+                                .then(function(response)
+                                {
+                                    for (var j = 0; j < 5; j++)
                                     {
-                                        console.log(response.data.tracks);
-                                        for (var j = 0; j < 5; j++)
-                                        {
-                                            tracks.push(response.data.tracks[j].uri);
-                                        }
-                                        console.log("Tracks: " + tracks);
-                                        sessionStorage.setItem("SmartSpot-tracks", JSON.stringify(tracks));
-                                        sessionStorage.setItem("SmartSpot-name", artistName + " Mashup");
-                                    }, function(error)
+                                        tracks.push(response.data.tracks[j].uri);
+                                    }
+                                    for (var i = 0; i < size; i++)
                                     {
-                                        return $q.reject(error);
-                                    });
-                            }
+                                        getTopTracks(relatedArtists[i].id)
+                                            .then(function(response)
+                                            {
+                                                console.log(response.data.tracks);
+                                                for (var k = 0; k < 5; k++)
+                                                {
+                                                    tracks.push(response.data.tracks[k].uri);
+                                                }
+                                                console.log("Tracks: " + tracks);
+                                                localStorage.setItem("SmartSpot-tracks", JSON.stringify(tracks));
+                                                localStorage.setItem("SmartSpot-name", artistName + " Mashup");
+                                            }, function(error)
+                                            {
+                                                return $q.reject(error);
+                                            });
+                                    }
+                                }, function(error)
+                                {
+                                    return $q.reject(error);
+                                });
                         }, function(error)
                         {
                             return $q.reject(error);

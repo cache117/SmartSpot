@@ -1,170 +1,339 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>
-        <html>
-        <head>
-            <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
-            <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css" />
-            <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.js"></script>
-            <script>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css" />
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
 
-                var g_access_token = '';
-                var g_username = '';
-                var g_tracks = [];
+        var g_access_token = '';
+        var g_username = '';
+        var g_tracks = [];
 
-                function getUsername(callback)
+        function getUsername(callback)
+        {
+            console.log('getUsername');
+            var url = 'https://api.spotify.com/v1/me';
+            $.ajax(url, {
+                dataType:'json',
+                headers:{
+                    'Authorization':'Bearer ' + g_access_token
+                },
+                success:function(r)
                 {
-                    console.log('getUsername');
-                    var url = 'https://api.spotify.com/v1/me';
-                    $.ajax(url, {
-                        dataType:'json',
-                        headers:{
-                            'Authorization':'Bearer ' + g_access_token
-                        },
-                        success:function(r)
-                        {
-                            console.log('got username response', r);
-                            callback(r.id);
-                        },
-                        error:function(r)
-                        {
-                            callback(null);
-                        }
-                    });
+                    console.log('got username response', r);
+                    callback(r.id);
+                },
+                error:function(r)
+                {
+                    callback(null);
                 }
+            });
+        }
 
-                function buildPlaylist(username, name, callback)
+        function authorizationCodeGrant(code, callback)
+        {
+            var clientId = 'de9c4a4a601a43a093584aefeef9b845';
+            var clientSecret = '3039cd179c4d4673b04aa3cfda9c9bf1';
+            var redirectUri = 'http://localhost:3001/callback.html';
+            console.log("authorization Code grant");
+            var url = 'https://accounts.spotify.com/api/token';
+            var Base64 = {
+                _keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+                encode:function(e)
                 {
-                    console.log('buildPlaylist', username, name);
-                    var url = 'https://api.spotify.com/v1/users/' + username +
-                            '/playlists';
-                    $.ajax(url, {
-                        method:'POST',
-                        data:JSON.stringify({
-                            'name':name,
-                            'public':false
-                        }),
-                        dataType:'json',
-                        headers:{
-                            'Authorization':'Bearer ' + g_access_token,
-                            'Content-Type':'application/json'
-                        },
-                        success:function(r)
-                        {
-                            console.log('create playlist response', r);
-                            callback(r.id);
-                        },
-                        error:function(r)
-                        {
-                            callback(null);
-                        }
-                    });
-                }
-
-                function addTracksToPlaylist(username, playlist, tracks, callback)
-                {
-                    console.log('addTracksToPlaylist', username, playlist, tracks);
-                    var url = 'https://api.spotify.com/v1/users/' + username +
-                            '/playlists/' + playlist +
-                            '/tracks'; // ?uris='+encodeURIComponent(tracks.join(','));
-                    $.ajax(url, {
-                        method:'POST',
-                        data:JSON.stringify(tracks),
-                        dataType:'text',
-                        headers:{
-                            'Authorization':'Bearer ' + g_access_token,
-                            'Content-Type':'application/json'
-                        },
-                        success:function(r)
-                        {
-                            console.log('add track response', r);
-                            callback(r.id);
-                        },
-                        error:function(r)
-                        {
-                            callback(null);
-                        }
-                    });
-                }
-
-                function doit()
-                {
-                    // parse hash
-                    var hash = location.hash.replace(/#/g, '');
-                    var all = hash.split('&');
-                    var args = {};
-                    console.log('all', all);
-                    all.forEach(function(keyvalue)
+                    var t = "";
+                    var n, r, i, s, o, u, a;
+                    var f = 0;
+                    e = Base64._utf8_encode(e);
+                    while (f < e.length)
                     {
-                        var idx = keyvalue.indexOf('=');
-                        var key = keyvalue.substring(0, idx);
-                        var val = keyvalue.substring(idx + 1);
-                        args[key] = val;
-                    });
-
-                    g_name = localStorage.getItem('createplaylist-name');
-                    g_tracks = JSON.parse(localStorage.getItem('createplaylist-tracks'));
-
-                    console.log('got args', args);
-
-                    if (typeof(args['access_token']) != 'undefined')
-                    {
-                        // got access token
-                        console.log('got access token', args['access_token']);
-                        g_access_token = args['access_token'];
+                        n = e.charCodeAt(f++);
+                        r = e.charCodeAt(f++);
+                        i = e.charCodeAt(f++);
+                        s = n >> 2;
+                        o = (n & 3) << 4 | r >> 4;
+                        u = (r & 15) << 2 | i >> 6;
+                        a = i & 63;
+                        if (isNaN(r))
+                        {
+                            u = a = 64
+                        }
+                        else if (isNaN(i))
+                        {
+                            a = 64
+                        }
+                        t = t + this._keyStr.charAt(s) + this._keyStr.charAt(o) + this._keyStr.charAt(u) + this._keyStr.charAt(a)
                     }
-
-                    getUsername(function(username)
+                    return t
+                },
+                decode:function(e)
+                {
+                    var t = "";
+                    var n, r, i;
+                    var s, o, u, a;
+                    var f = 0;
+                    e = e.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+                    while (f < e.length)
                     {
-                        console.log('got username', username);
-                        buildPlaylist(username, g_name, function(playlist)
+                        s = this._keyStr.indexOf(e.charAt(f++));
+                        o = this._keyStr.indexOf(e.charAt(f++));
+                        u = this._keyStr.indexOf(e.charAt(f++));
+                        a = this._keyStr.indexOf(e.charAt(f++));
+                        n = s << 2 | o >> 4;
+                        r = (o & 15) << 4 | u >> 2;
+                        i = (u & 3) << 6 | a;
+                        t = t + String.fromCharCode(n);
+                        if (u != 64)
                         {
-                            console.log('created playlist', playlist);
-                            addTracksToPlaylist(username, playlist, g_tracks, function()
-                            {
-                                console.log('tracks added.');
-                                username = 'cache117';
-                                playlist = '0SGVg26tbs6M2hSBc3ghIK';
-                                $('#playlistlink').attr('href', 'spotify:user:' + username + ':playlist:' + playlist);
-                                $('#creating').hide();
-                                $('#done').show();
-                            });
-                        });
+                            t = t + String.fromCharCode(r)
+                        }
+                        if (a != 64)
+                        {
+                            t = t + String.fromCharCode(i)
+                        }
+                    }
+                    t = Base64._utf8_decode(t);
+                    return t
+                },
+                _utf8_encode:function(e)
+                {
+                    e = e.replace(/\r\n/g, "\n");
+                    var t = "";
+                    for (var n = 0; n < e.length; n++)
+                    {
+                        var r = e.charCodeAt(n);
+                        if (r < 128)
+                        {
+                            t += String.fromCharCode(r)
+                        }
+                        else if (r > 127 && r < 2048)
+                        {
+                            t += String.fromCharCode(r >> 6 | 192);
+                            t += String.fromCharCode(r & 63 | 128)
+                        }
+                        else
+                        {
+                            t += String.fromCharCode(r >> 12 | 224);
+                            t += String.fromCharCode(r >> 6 & 63 | 128);
+                            t += String.fromCharCode(r & 63 | 128)
+                        }
+                    }
+                    return t
+                },
+                _utf8_decode:function(e)
+                {
+                    var t = "";
+                    var n = 0;
+                    var r = c1 = c2 = 0;
+                    while (n < e.length)
+                    {
+                        r = e.charCodeAt(n);
+                        if (r < 128)
+                        {
+                            t += String.fromCharCode(r);
+                            n++
+                        }
+                        else if (r > 191 && r < 224)
+                        {
+                            c2 = e.charCodeAt(n + 1);
+                            t += String.fromCharCode((r & 31) << 6 | c2 & 63);
+                            n += 2
+                        }
+                        else
+                        {
+                            c2 = e.charCodeAt(n + 1);
+                            c3 = e.charCodeAt(n + 2);
+                            t += String.fromCharCode((r & 15) << 12 | (c2 & 63) << 6 | c3 & 63);
+                            n += 3
+                        }
+                    }
+                    return t
+                }
+            };
+            var encodedSecret = Base64.encode(clientSecret);
+            var encodedId = Base64.encode(clientId);
+            $.ajax(url, {
+                method:'POST',
+                data:JSON.stringify({
+                    'grant_type':'authorization_token',
+                    'code':code,
+                    'redirect_uri':redirectUri,
+                    'client_id':clientId,
+                    'client_secret':clientSecret
+                }),
+                dataType:'json',
+                /*headers:{
+                 'Authorization': "Basic " + encodedId + ":" + encodedSecret
+                 },*/
+                success:function(r)
+                {
+                    console.log('get auth code response: ', r);
+                    callback(r);
+                },
+                error:function(r)
+                {
+                    callback(null);
+                }
+            });
+        }
+
+        function refreshToken(callback)
+        {
+            var url = 'http://localhost:3001/refresh';
+            $.ajax(url, {
+                method:'GET',
+                success:function(r)
+                {
+                    console.log("Refresh Token: " + r);
+                    callback(r);
+                },
+                error: function(r)
+                {
+                    callback(null);
+                }
+            }
+            );
+        }
+
+        function createPlaylist(username, name, callback)
+        {
+            console.log('createPlaylist', username, name);
+            var url = 'https://api.spotify.com/v1/users/' + username +
+                    '/playlists';
+            $.ajax(url, {
+                method:'POST',
+                data:JSON.stringify({
+                    'name':name,
+                    'public':false
+                }),
+                dataType:'json',
+                headers:{
+                    'Authorization':'Bearer ' + g_access_token,
+                    'Content-Type':'application/json'
+                },
+                success:function(r)
+                {
+                    console.log('create playlist response', r);
+                    callback(r.id);
+                },
+                error:function(r)
+                {
+                    callback(null);
+                }
+            });
+        }
+
+        function addTracksToPlaylist(username, playlist, tracks, callback)
+        {
+            console.log('addTracksToPlaylist', username, playlist, tracks);
+            var url = 'https://api.spotify.com/v1/users/' + username +
+                    '/playlists/' + playlist +
+                    '/tracks'; // ?uris='+encodeURIComponent(tracks.join(','));
+            $.ajax(url, {
+                method:'POST',
+                data:JSON.stringify(tracks),
+                dataType:'text',
+                headers:{
+                    'Authorization':'Bearer ' + g_access_token,
+                    'Content-Type':'application/json'
+                },
+                success:function(r)
+                {
+                    console.log('add track response', r);
+                    callback(r.id);
+                },
+                error:function(r)
+                {
+                    callback(null);
+                }
+            });
+        }
+
+        function doit()
+        {
+            //parse hash
+            var hash = location.hash.replace(/#/g, '');
+            var all = hash.split('&');
+            var args = {};
+            console.log('all', all);
+            all.forEach(function(keyvalue)
+            {
+                var idx = keyvalue.indexOf('=');
+                var key = keyvalue.substring(0, idx);
+                var val = keyvalue.substring(idx + 1);
+                args[key] = val;
+            });
+
+            g_name = localStorage.getItem('SmartSpot-name');
+            g_tracks = JSON.parse(localStorage.getItem('SmartSpot-tracks'));
+            console.log(g_name);
+
+            console.log('got args', args);
+//            authorizationCodeGrant(args['code'], function(response)
+//            {
+            //console.log("Auth code grant: " + response);
+            if (typeof(args['access_token']) != 'undefined')
+            {
+                // got access token
+                console.log('got access token', args['access_token']);
+                g_access_token = args['access_token'];
+            }
+            else
+            {
+                g_access_token = localStorage.getItem('SmartSpot-code');
+                console.log("Auth token: " + g_access_token);
+            }
+
+            getUsername(function(username)
+            {
+                console.log('got username', username);
+                createPlaylist(username, g_name, function(playlist)
+                {
+                    console.log('created playlist', playlist);
+                    addTracksToPlaylist(username, playlist, g_tracks, function()
+                    {
+                        console.log('tracks added.');
+//                        username = 'cache117';
+//                        playlist = '0SGVg26tbs6M2hSBc3ghIK';
+                        $('#playlistlink').attr('href', 'spotify:user:' + username + ':playlist:' + playlist);
+                        $('#creating').hide();
+                        $('#done').show();
                     });
-                }
+                });
+            });
+//            });
+        }
 
-            </script>
-            <style type="text/css">
+    </script>
+    <style type="text/css">
 
-                body {
-                    background-color: #333;
-                    color: #fff;
-                    overflow: hidden;
-                    border: 0;
-                    margin: 0;
-                    padding: 0;
-                }
+        body {
+            background-color: #333;
+            color: #fff;
+            overflow: hidden;
+            border: 0;
+            margin: 0;
+            padding: 0;
+        }
 
-                .site-wrapper {
-                    position: absolute;
-                    left: 0px;
-                    top: 0px;
-                    width: 50%;
-                    height: 50%;
-                }
+        .site-wrapper {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 50%;
+            height: 50%;
+        }
 
-                .site-wrapper-inner {
-                    position: absolute;
-                    right: -250px;
-                    bottom: -30px;
-                    width: 500px;
-                    height: 100px;
-                }
+        .site-wrapper-inner {
+            position: absolute;
+            right: -250px;
+            bottom: -30px;
+            width: 500px;
+            height: 100px;
+        }
 
-            </style>
-        </head>
+    </style>
+</head>
 <body onload="doit()">
 <div class="site-wrapper">
     <div class="site-wrapper-inner">
