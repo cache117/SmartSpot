@@ -6,17 +6,17 @@ app.controller('MainCtrl', [
         $scope.buildPlaylist = function()
         {
             var artistName = $scope.artist;
-            console.log(artistName);
+            //console.log(artistName);
             getArtistId(artistName)
                 .then(function(response)
                 {
                     var artistId = removeQuotes(response.data);
-                    console.log(artistId);
+                    //console.log(artistId);
                     getRelatedArtists(artistId)
                         .then(function(response)
                         {
                             var relatedArtists = response.data.artists;
-                            console.log(response);
+                            //console.log(response);
                             var size = 19;
                             if (relatedArtists.length < size)
                                 size = relatedArtists.length;
@@ -33,12 +33,12 @@ app.controller('MainCtrl', [
                                         getTopTracks(relatedArtists[i].id)
                                             .then(function(response)
                                             {
-                                                console.log(response.data.tracks);
+                                                //console.log(response.data.tracks);
                                                 for (var k = 0; k < 5; k++)
                                                 {
                                                     tracks.push(response.data.tracks[k].uri);
                                                 }
-                                                console.log("Tracks: " + tracks);
+                                                //console.log("Tracks: " + tracks);
                                                 localStorage.setItem("SmartSpot-tracks", JSON.stringify(tracks));
                                                 localStorage.setItem("SmartSpot-name", artistName + " Mashup");
                                                 window.open("/login", "Playlist Creation", 'WIDTH=400, HEIGHT=500');

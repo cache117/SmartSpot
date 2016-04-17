@@ -6,6 +6,7 @@ body {
     margin: 0;
     padding: 0;
 }
+
 .site-wrapper {
     position: absolute;
     left: 0px;
@@ -13,6 +14,7 @@ body {
     width: 50%;
     height: 50%;
 }
+
 .site-wrapper-inner {
     position: absolute;
     right: -250px;
