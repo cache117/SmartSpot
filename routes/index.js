@@ -7,7 +7,7 @@ var SmartSpot = require('../SmartSpot');
 
 var clientId = 'de9c4a4a601a43a093584aefeef9b845';
 var clientSecret = '3039cd179c4d4673b04aa3cfda9c9bf1';
-//var redirectUri = 'http://localhost:3001/callback.html';
+//var redirectUri = 'http://ec2-54-174-133-70.compute-1.amazonaws.com:3001/callback';
 var redirectUri = 'http://localhost:3001/callback';
 
 var smartSpot = new SmartSpot(clientId, clientSecret, redirectUri);
