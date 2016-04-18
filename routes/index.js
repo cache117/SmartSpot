@@ -17,8 +17,6 @@ var authCode;
 router.use(express.static(__dirname + '/public'))
     .use(cookieParser());
 
-var stateKey = 'spotify_auth_state';
-
 var app = express();
 
 router.get('/login', function(req, res)
@@ -36,45 +34,45 @@ app.get('/refresh_token', function(req, res)
     smartSpot.getRefreshToken(req, res);
 });
 
-router.get('/search', function(req, res, next)
+router.get('/search', function(req, res)
 {
     var artist = req.param('artistName');
-    console.log("Artist: " + artist);
+    //console.log("Artist: " + artist);
     smartSpot.getArtistID(artist, function(data)
     {
-        console.log("Data: " + data);
+        //console.log("Data: " + data);
         res.json(data.id);
     });
 });
 
-router.get('/related', function(req, res, next)
+router.get('/related', function(req, res)
 {
     var artistId = req.param('artistId');
-    console.log(artistId);
+    //console.log(artistId);
     smartSpot.getRelatedArtists(artistId, function(data)
     {
-        console.log("Related Artists data: " + data);
+        //console.log("Related Artists data: " + data);
         res.json(data);
     });
 });
 
-router.get('/topTracks', function(req, res, next)
+router.get('/topTracks', function(req, res)
 {
     var artistId = req.param('artistId');
-    console.log(artistId);
+    //console.log(artistId);
     smartSpot.getArtistTopTracks(artistId, function(data)
     {
-        console.log("Top tracks: " + data);
+        //console.log("Top tracks: " + data);
         res.json(data);
     });
 });
 
-router.get('/me', function(req, res, next)
+router.get('/me', function(req, res)
 {
     authCode = req.param('code');
     smartSpot.getMe(authCode, function(user)
     {
-        console.log("UserName: " + user.id);
+        //console.log("UserName: " + user.id);
         res.json(user);
     });
 });

@@ -64,81 +64,39 @@ function SmartSpot(clientId, clientSecret, redirectUri)
         else
         {
             res.clearCookie(stateKey);
-            var authOptions = {
-                url:'https://accounts.spotify.com/api/token',
-                form:{
-                    code:code,
-                    redirect_uri:redirectUri,
-                    grant_type:'authorization_code'
-                },
-                headers:{
-                    'Authorization':'Basic ' + (new Buffer(clientId + ':' + clientSecret).toString('base64'))
-                },
-                json:true
-            };
-
-            request.post(authOptions, function(error, response, body)
-            {
-                if (!error && response.statusCode === 200)
+            spotifyApi.authorizationCodeGrant(code)
+                .then(function(data)
                 {
-
-                    var access_token = body.access_token,
-                        refresh_token = body.refresh_token;
-
-                    var options = {
-                        url:'https://api.spotify.com/v1/me',
-                        headers:{ 'Authorization':'Bearer ' + access_token },
-                        json:true
-                    };
-
-                    // use the access token to access the Spotify Web API
-                    request.get(options, function(error, response, body)
-                    {
-                        console.log(body);
-                    });
-
-                    // we can also pass the token to the browser to make requests from there
+                    spotifyApi.setAccessToken(data.body['access_token']);
+                    spotifyApi.setRefreshToken(data.body['refresh_token']);
                     res.redirect('/callback.html#' +
                         querystring.stringify({
-                            access_token:access_token,
-                            refresh_token:refresh_token
+                            access_token:spotifyApi.getAccessToken(),
+                            refresh_token:spotifyApi.getRefreshToken()
                         }));
-                }
-                else
+                }, function(err)
                 {
-                    res.redirect('/callback.html#' +
+                    console.error(err);
+                    res.redirect('/#' +
                         querystring.stringify({
                             error:'invalid_token'
                         }));
-                }
-            });
+                });
         }
     };
 
     this.getRefreshToken = function(req, res)
     {
-        // requesting access token from refresh token
-        var refresh_token = req.query.refresh_token;
-        var authOptions = {
-            url:'https://accounts.spotify.com/api/token',
-            headers:{ 'Authorization':'Basic ' + (new Buffer(clientId + ':' + clientSecret).toString('base64')) },
-            form:{
-                grant_type:'refresh_token',
-                refresh_token:refresh_token
-            },
-            json:true
-        };
-
-        request.post(authOptions, function(error, response, body)
-        {
-            if (!error && response.statusCode === 200)
+        spotifyApi.refreshAccessToken()
+            .then(function(data)
             {
-                var access_token = body.access_token;
                 res.send({
-                    'access_token':access_token
+                    'access_token':spotifyApi.getAccessToken()
                 });
-            }
-        });
+            }, function(err)
+            {
+                console.log(err);
+            });
     };
 
     /**
@@ -151,14 +109,15 @@ function SmartSpot(clientId, clientSecret, redirectUri)
         spotifyApi.searchArtists(name)
             .then(function(data)
             {
-                console.log('Search artists for ' + name, data.body);
+                //console.log('Search artists for ' + name, data.body);
                 var closestArtist = data.body.artists.items[0];
-                console.log(closestArtist);
-                console.log('Closest artist: ' + closestArtist.name + ' with ID: ' + closestArtist.id);
+                //console.log(closestArtist);
+                //console.log('Closest artist: ' + closestArtist.name + ' with ID: ' + closestArtist.id);
                 callback(closestArtist);
             }, function(err)
             {
                 console.error(err);
+                callback(err);
             });
     };
 
@@ -176,17 +135,18 @@ function SmartSpot(clientId, clientSecret, redirectUri)
                 if (data.body.artists.length)
                 {
                     // Print the number of similar artists
-                    console.log('I got ' + data.body.artists.length + ' similar artists!');
+                    //console.log('I got ' + data.body.artists.length + ' similar artists!');
                     callback(data.body);
                 }
                 else
                 {
                     console.log('No related artists found');
+                    callback("No related artists found");
                 }
-
             }, function(err)
             {
                 console.log('Something went wrong..', err.message);
+                callback(err);
             });
     };
 
@@ -200,11 +160,12 @@ function SmartSpot(clientId, clientSecret, redirectUri)
         spotifyApi.getArtistTopTracks(artistId, 'US')
             .then(function(data)
             {
-                console.log(data.body);
+                //console.log(data.body);
                 callback(data.body);
             }, function(err)
             {
                 console.log('Something went wrong!', err);
+                callback(err);
             });
     };
 
@@ -220,7 +181,7 @@ function SmartSpot(clientId, clientSecret, redirectUri)
         spotifyApi.buildPlaylist(user, playlistTitle, { 'public':true })
             .then(function(data)
             {
-                console.log('Created playlist!', data);
+                //console.log('Created playlist!', data);
                 var playlistId = data.id; //TODO probably wrong.
                 // Add tracks to a playlist
                 spotifyApi.addTracksToPlaylist(user, playlistId, tracks)
@@ -239,19 +200,33 @@ function SmartSpot(clientId, clientSecret, redirectUri)
 
     this.getMe = function(authCode, callback)
     {
-        spotifyApi.authorizationCodeGrant(authCode)
-            .then(function(response)
-            {
-                var accessToken = response.body['access_token'];
-                console.log("Got Access Token: " + accessToken);
-                spotifyApi.setAccessToken(accessToken);
-                return spotifyApi.getMe();
-            })
-            .then(function(data)
-            {
-                console.log("Me: " + data);
-                callback(data.body);
-            });
+        if (authCode)
+        {
+            spotifyApi.authorizationCodeGrant(authCode)
+                .then(function(response)
+                {
+                    var accessToken = response.body['access_token'];
+                    console.log("Got Access Token: " + accessToken);
+                    spotifyApi.setAccessToken(accessToken);
+                    return spotifyApi.getMe();
+                })
+                .then(function(data)
+                {
+                    console.log("Me: " + data);
+                    callback(data.body);
+                });
+        }
+        else
+        {
+            spotifyApi.getMe()
+                .then(function(data)
+                {
+                    callback(data);
+                }, function(err)
+                {
+                    callback(err);
+                });
+        }
     };
 
     this.getAccessToken = function(callback)
@@ -261,7 +236,7 @@ function SmartSpot(clientId, clientSecret, redirectUri)
 
     this.refreshAccessToken = function(callback)
     {
-        spotifyApi.refreshAccessToken()
+        callback(spotifyApi.refreshAccessToken());
     };
 }
 

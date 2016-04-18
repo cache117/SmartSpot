@@ -60,6 +60,7 @@ app.controller('MainCtrl', [
                     return $q.reject(error);
                 });
         };
+
         var getArtistId = function(artist)
         {
             return $http.get('/search',
