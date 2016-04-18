@@ -86,4 +86,9 @@ router.get('/refresh', function(req, res)
     });
 });
 
+router.get('/error', function(req, res)
+{
+    res.redirect('error.html');
+});
+
 module.exports = router;

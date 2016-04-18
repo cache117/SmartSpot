@@ -11,24 +11,42 @@ app.controller('MainCtrl', [
                 .then(function(response)
                 {
                     var artistId = removeQuotes(response.data);
+                    if (!artistId)
+                    {
+                        window.open("/error", "Playlist Creation Error", 'WIDTH=400, HEIGHT=500');
+                        return;
+                    }
                     //console.log(artistId);
                     getRelatedArtists(artistId)
                         .then(function(response)
                         {
                             var relatedArtists = response.data.artists;
+                            if (!relatedArtists)
+                            {
+                                window.open("/error", "Playlist Creation Error", 'WIDTH=400, HEIGHT=500');
+                                return;
+                            }
                             //console.log(response);
-                            var size = 19;
-                            if (relatedArtists.length < size)
-                                size = relatedArtists.length;
+                            var numberOfArtists = 19;
+                            if (relatedArtists.length < numberOfArtists)
+                                numberOfArtists = relatedArtists.length;
                             var tracks = [];
                             getTopTracks(artistId)
                                 .then(function(response)
                                 {
-                                    for (var j = 0; j < 5; j++)
+                                    if (!response.data.tracks)
+                                    {
+                                        window.open("/error", "Playlist Creation Error", 'WIDTH=400, HEIGHT=500');
+                                        return;
+                                    }
+                                    var numberOfTracks = 5;
+                                    if (response.data.tracks.length < numberOfTracks)
+                                        numberOfTracks = response.data.tracks.length;
+                                    for (var j = 0; j < numberOfTracks; j++)
                                     {
                                         tracks.push(response.data.tracks[j].uri);
                                     }
-                                    for (var i = 0; i < size; i++)
+                                    for (var i = 0; i < numberOfArtists; i++)
                                     {
                                         getTopTracks(relatedArtists[i].id)
                                             .then(function(response)

@@ -9,8 +9,8 @@ body {
 
 .site-wrapper {
     position: absolute;
-    left: 0px;
-    top: 0px;
+    left: 0;
+    top: 0;
     width: 50%;
     height: 50%;
 }
@@ -21,4 +21,12 @@ body {
     bottom: -30px;
     width: 500px;
     height: 100px;
+}
+
+#error, #creating, #done {
+    text-align: center;
+}
+
+#done {
+    display: none;
 }
