@@ -6,12 +6,14 @@ app.controller('MainCtrl', [
         $scope.buildPlaylist = function()
         {
             var artistName = $scope.artist;
+            if (artistName === undefined)
+                return;
             //console.log(artistName);
             getArtistId(artistName)
                 .then(function(response)
                 {
                     var artistId = removeQuotes(response.data);
-                    if (!artistId)
+                    if (artistId === undefined)
                     {
                         window.open("/error", "Playlist Creation Error", 'WIDTH=400, HEIGHT=500');
                         return;
@@ -21,27 +23,23 @@ app.controller('MainCtrl', [
                         .then(function(response)
                         {
                             var relatedArtists = response.data.artists;
-                            if (!relatedArtists)
+                            if (relatedArtists === undefined)
                             {
                                 window.open("/error", "Playlist Creation Error", 'WIDTH=400, HEIGHT=500');
                                 return;
                             }
                             //console.log(response);
-                            var numberOfArtists = 19;
-                            if (relatedArtists.length < numberOfArtists)
-                                numberOfArtists = relatedArtists.length;
+                            var numberOfArtists = clipLength(relatedArtists.length, 19);
                             var tracks = [];
                             getTopTracks(artistId)
                                 .then(function(response)
                                 {
-                                    if (!response.data.tracks)
+                                    if (response.data.tracks === undefined)
                                     {
                                         window.open("/error", "Playlist Creation Error", 'WIDTH=400, HEIGHT=500');
                                         return;
                                     }
-                                    var numberOfTracks = 5;
-                                    if (response.data.tracks.length < numberOfTracks)
-                                        numberOfTracks = response.data.tracks.length;
+                                    var numberOfTracks = clipLength(response.data.tracks.length, 5);
                                     for (var j = 0; j < numberOfTracks; j++)
                                     {
                                         tracks.push(response.data.tracks[j].uri);
@@ -51,14 +49,14 @@ app.controller('MainCtrl', [
                                         getTopTracks(relatedArtists[i].id)
                                             .then(function(response)
                                             {
+                                                var numberOfTracks = clipLength(response.data.tracks.length, 5);
                                                 //console.log(response.data.tracks);
-                                                for (var k = 0; k < 5; k++)
+                                                for (var k = 0; k < numberOfTracks; k++)
                                                 {
                                                     tracks.push(response.data.tracks[k].uri);
                                                 }
                                                 //console.log("Tracks: " + tracks);
-                                                localStorage.setItem("SmartSpot-tracks", JSON.stringify(tracks));
-                                                localStorage.setItem("SmartSpot-name", artistName + " Mashup");
+                                                storePlaylistInLocalMemory(artistName, tracks);
                                                 window.open("/login", "Playlist Creation", 'WIDTH=400, HEIGHT=500');
                                             }, function(error)
                                             {
@@ -115,6 +113,20 @@ app.controller('MainCtrl', [
         var removeQuotes = function(value)
         {
             return value.replace(/['"]+/g, '');
+        };
+
+        var clipLength = function(actualLength, defaultLength)
+        {
+            if (actualLength < defaultLength)
+                return actualLength;
+            else
+                return defaultLength;
+        };
+
+        var storePlaylistInLocalMemory = function(artistName, tracks)
+        {
+            localStorage.setItem("SmartSpot-tracks", JSON.stringify(tracks));
+            localStorage.setItem("SmartSpot-name", artistName + " Mashup");
         };
     }
 ]);
