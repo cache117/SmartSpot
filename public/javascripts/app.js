@@ -13,32 +13,32 @@ app.controller('MainCtrl', [
                 .then(function(response)
                 {
                     var artistId = removeQuotes(response.data);
-                    if (artistId === undefined)
+                    /*if (artistId === undefined)
                     {
                         window.open("/error", "Playlist Creation Error", 'WIDTH=400, HEIGHT=500');
                         return;
-                    }
+                    }*/
                     //console.log(artistId);
                     getRelatedArtists(artistId)
                         .then(function(response)
                         {
                             var relatedArtists = response.data.artists;
-                            if (relatedArtists === undefined)
+                            /*if (relatedArtists === undefined)
                             {
                                 window.open("/error", "Playlist Creation Error", 'WIDTH=400, HEIGHT=500');
                                 return;
-                            }
+                            }*/
                             //console.log(response);
                             var numberOfArtists = clipLength(relatedArtists.length, 19);
                             var tracks = [];
                             getTopTracks(artistId)
                                 .then(function(response)
                                 {
-                                    if (response.data.tracks === undefined)
+                                    /*if (response.data.tracks === undefined)
                                     {
                                         window.open("/error", "Playlist Creation Error", 'WIDTH=400, HEIGHT=500');
                                         return;
-                                    }
+                                    }*/
                                     var numberOfTracks = clipLength(response.data.tracks.length, 5);
                                     for (var j = 0; j < numberOfTracks; j++)
                                     {
